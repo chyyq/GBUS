@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GBUS 美股量化持仓监控</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">GBUS Quant Dashboard</p>
+        <h1>美股四仓量化持仓监控</h1>
+      </div>
+      <div class="header-actions">
+        <button class="ghost-button" id="refresh-data" type="button">刷新数据</button>
+        <button class="primary-button" id="enable-notify" type="button">开启提醒</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="status-band" id="status-band">
+        <div>
+          <span class="label">数据状态</span>
+          <strong id="data-status">加载中</strong>
+        </div>
+        <div>
+          <span class="label">交易日</span>
+          <strong id="trading-date">--</strong>
+        </div>
+        <div>
+          <span class="label">MarketScore</span>
+          <strong id="market-score">--</strong>
+        </div>
+        <div>
+          <span class="label">市场状态</span>
+          <strong id="market-regime">--</strong>
+        </div>
+      </section>
+
+      <section class="section-shell" id="portfolio-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Part 1</p>
+            <h2>持仓与股价线性呈现</h2>
+          </div>
+          <p class="section-note">持仓保存在当前浏览器，页面每日读取最新数据后自动重新判断卖点和止损。</p>
+        </div>
+
+        <div class="portfolio-layout">
+          <form class="holding-form" id="holding-form">
+            <input type="hidden" id="holding-id" />
+            <label>
+              股票代码
+              <input id="holding-symbol" name="symbol" autocomplete="off" placeholder="NVDA" required />
+            </label>
+            <label>
+              仓位模块
+              <select id="holding-bucket" name="bucket">
+                <option value="trend">A 趋势放大仓</option>
+                <option value="elastic">B 高弹性仓</option>
+                <option value="shortTerm">C 短线交易仓</option>
+                <option value="cash">D 现金/观察</option>
+              </select>
+            </label>
+            <label>
+              买入价
+              <input id="holding-entry" name="entry" inputmode="decimal" placeholder="0.00" />
+            </label>
+            <label>
+              股数
+              <input id="holding-shares" name="shares" inputmode="decimal" placeholder="0" />
+            </label>
+            <label>
+              买入日期
+              <input id="holding-date" name="date" type="date" />
+            </label>
+            <label class="wide-field">
+              备注
+              <input id="holding-note" name="note" placeholder="可记录计划、仓位原因或观察条件" />
+            </label>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">保存持仓</button>
+              <button class="ghost-button" id="reset-form" type="button">清空</button>
+            </div>
+          </form>
+
+          <div class="chart-panel">
+            <div class="chart-toolbar">
+              <label>
+                图表标的
+                <select id="chart-symbol"></select>
+              </label>
+              <span id="chart-caption">等待数据</span>
+            </div>
+            <canvas id="price-chart" width="960" height="360" aria-label="价格折线图"></canvas>
+          </div>
+        </div>
+
+        <div class="alert-panel" id="alerts-panel"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>代码</th>
+                <th>模块</th>
+                <th>买入价</th>
+                <th>现价</th>
+                <th>收益</th>
+                <th>策略提示</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="holdings-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section-shell" id="market-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Market Regime</p>
+            <h2>市场总开关</h2>
+          </div>
+          <p class="section-note">市场状态优先级高于个股信号。</p>
+        </div>
+        <div class="market-grid" id="market-dashboard"></div>
+      </section>
+
+      <section class="section-shell" id="modules-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Part 2</p>
+            <h2>四个量化模块</h2>
+          </div>
+          <p class="section-note">未输入买入价的推荐只进入观察，不触发卖点或止损提醒。</p>
+        </div>
+        <div class="module-stack" id="strategy-modules"></div>
+      </section>
+
+      <section class="section-shell" id="serenity-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Part 3</p>
+            <h2>Serenity 最新讯息总结</h2>
+          </div>
+          <a class="text-link" href="https://x.com/aleabitoreddit" target="_blank" rel="noreferrer">打开 X 主页</a>
+        </div>
+        <div id="serenity-summary" class="text-panel"></div>
+      </section>
+
+      <section class="section-shell" id="news-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Daily News</p>
+            <h2>每日资讯</h2>
+          </div>
+          <p class="section-note">资讯来自 Yahoo Finance 搜索结果，随每日 Action 更新。</p>
+        </div>
+        <div id="news-list" class="news-grid"></div>
+      </section>
+
+      <section class="section-shell" id="sources-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Data Sources</p>
+            <h2>数据源与运行记录</h2>
+          </div>
+        </div>
+        <div id="source-list" class="source-list"></div>
+      </section>
+    </main>
+  </body>
+</html>

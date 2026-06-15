@@ -1,0 +1,13 @@
+{
+  "name": "gbus-quant-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:data": "python scripts/generate-data.py",
+    "serve": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
