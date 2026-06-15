@@ -1,5 +1,7 @@
 const STORE_KEY = "gbus_holdings_v1";
 const NOTIFY_KEY = "gbus_notified_alerts_v1";
+const APP_SCRIPT = document.querySelector('script[src$="app.js"]');
+const DATA_URL = new URL("data/latest.json", APP_SCRIPT?.src || window.location.href);
 
 let dashboardData = null;
 let holdings = loadHoldings();
@@ -48,7 +50,8 @@ function bindEvents() {
 async function loadData(silent = false) {
   try {
     if (!silent) $("#data-status").textContent = "加载中";
-    const response = await fetch(`data/latest.json?ts=${Date.now()}`, { cache: "no-store" });
+    DATA_URL.searchParams.set("ts", Date.now());
+    const response = await fetch(DATA_URL, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     dashboardData = await response.json();
     renderAll();
