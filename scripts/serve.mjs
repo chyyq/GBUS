@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, "..", "docs");
+const ROOT = path.resolve(__dirname, "..");
 const PORT = Number(process.env.PORT || 4173);
 
 const types = {
