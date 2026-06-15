@@ -1,6 +1,6 @@
 # GBUS 美股四仓量化网站
 
-这是一个可直接发布到 GitHub Pages 的静态量化看板。页面主体在 `docs/`，每日数据生成脚本在 `scripts/generate-data.mjs`，GitHub Actions 工作流在 `.github/workflows/deploy-pages.yml`。
+这是一个可直接发布到 GitHub Pages 的静态量化看板。页面主体在 `docs/`，每日数据生成脚本在 `scripts/generate-data.py`，GitHub Actions 工作流在 `.github/workflows/deploy-pages.yml`。
 
 ## 功能
 
@@ -23,9 +23,13 @@ npm run serve
 ## GitHub Pages 发布
 
 1. 把本仓库推送到 GitHub。
-2. 在仓库 `Settings -> Pages` 中把 Source 设为 `GitHub Actions`。
+2. 在仓库 `Settings -> Pages` 中把 Source 设为 `GitHub Actions`，不要选择 README 或仓库根目录作为展示页面。
 3. 进入 `Actions -> Daily Quant Site`，点击 `Run workflow` 验证一次。
-4. 之后工作流会按 `35 22 * * 1-5` UTC 自动运行，即美股交易日收盘后更新页面。
+4. 推送代码时会自动发布；之后工作流还会按 `35 22 * * 1-5` UTC 自动运行，即美股交易日收盘后更新页面。
+
+仓库地址和网站地址不是同一个页面。仓库通常是
+`https://github.com/用户名/仓库名`，网站地址通常是
+`https://用户名.github.io/仓库名/`。
 
 ## Serenity / X 配置
 
