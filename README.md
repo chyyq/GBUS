@@ -23,13 +23,21 @@ npm run serve
 ## GitHub Pages 发布
 
 1. 把本仓库推送到 GitHub。
-2. 在仓库 `Settings -> Pages` 中把 Source 设为 `GitHub Actions`，不要选择 README 或仓库根目录作为展示页面。
+2. 推荐在仓库 `Settings -> Pages` 中把 Source 设为 `GitHub Actions`。
 3. 进入 `Actions -> Daily Quant Site`，点击 `Run workflow` 验证一次。
 4. 推送代码时会自动发布；之后工作流还会按 `35 22 * * 1-5` UTC 自动运行，即美股交易日收盘后更新页面。
 
 仓库地址和网站地址不是同一个页面。仓库通常是
 `https://github.com/用户名/仓库名`，网站地址通常是
 `https://用户名.github.io/仓库名/`。
+
+为了兼容已有 Pages 设置，仓库根目录和 `docs/` 都包含网站入口：
+
+- 选择 `GitHub Actions`：发布 `_site` 构建产物。
+- 选择 `Deploy from a branch -> main -> /(root)`：直接使用根 `index.html`。
+- 选择 `Deploy from a branch -> main -> /docs`：直接使用 `docs/index.html`。
+
+三种方式都会打开量化看板，不会再由 README 充当首页。
 
 ## Serenity / X 配置
 
